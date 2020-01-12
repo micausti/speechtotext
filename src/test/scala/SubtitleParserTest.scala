@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.funsuite.AnyFunSuite
 
 class SubtitleParserTest extends AnyFunSuite with Matchers {
-
+  //TODO add tests back in
 //  test("subtitle parser returns list of more than one item")  {
 //    val result = new SubtitleFileParser().parse(input =  getClass.getResourceAsStream("/1-0694-1817-001.stl"))
 //    result.size should be > 1
