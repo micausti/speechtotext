@@ -1,5 +1,7 @@
 package com.speechtotext
 
+import java.util.Calendar
+
 import cats.effect.{IO, Resource}
 import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding
 import com.google.cloud.speech.v1.{
@@ -21,6 +23,7 @@ object SpeechToTextClient {
 
     clientResource.use { speechClient =>
       IO {
+        val startClock: Long = Calendar.getInstance().toInstant.toEpochMilli
         val config = RecognitionConfig.newBuilder
           .setEncoding(AudioEncoding.LINEAR16)
           .setSampleRateHertz(44100)
@@ -33,15 +36,18 @@ object SpeechToTextClient {
 
         val results = response.getResultsList.asScala.flatMap { result =>
           val alternative = result.getAlternativesList.get(0)
-          println("Transcription: %s%n", alternative.getWordsList.asScala)
+          println(s"Transcription: %s%n ${alternative.getWordsList.asScala}")
+          val endClock: Long = Calendar.getInstance().toInstant.toEpochMilli
+          println(s"Run Time ${endClock.-(startClock)}")
           (alternative.getWordsList.asScala
             .map(wordInfo =>
               GoogleWord(wordInfo.getWord.replaceAll("\\p{Punct}", ""),
                          wordInfo.getStartTime.getSeconds.toInt))
             .toList)
-        //TODO figure out how to print the updated list of good words with punctuation removed so can visually check for other anomalies
+
         }
         results.toList
+
       }
     }
   }

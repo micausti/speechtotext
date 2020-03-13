@@ -10,13 +10,12 @@ object Main extends App {
   //*60 sec Corrie sample
   val audioFileIncorrect =
     "gs://speech-to-text-ellen/1-0694-1817-001-sample-2.wav"
-  //TODO how did we know we needed the subtitle Resource as a stream? Did it come from the library documentation?
   val subtitleFile = getClass.getResourceAsStream("/2-4350-0001-001.stl")
 
-  val application: IO[Double] = for {
+  val application: IO[Unit] = for {
     googleWords <- SpeechToTextClient.work(audioFile)
     subtitleSentences <- SubtitleFileParser.parseFile(subtitleFile)
-    _ = println("Subtitle sentences: " + subtitleSentences)
+    _ = println(s"Subtitle sentences: $subtitleSentences ")
     result <- TranslationComparison.compare(googleWords, subtitleSentences, 300)
   } yield result
 

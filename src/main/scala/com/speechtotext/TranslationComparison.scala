@@ -5,7 +5,7 @@ import cats.effect.IO
 object TranslationComparison {
   def compare(googleTranslation: List[GoogleWord],
               subTranslation: List[SentenceFromSubtitleParser],
-              trimSample: Int): IO[Double] = IO {
+              trimSample: Int): IO[Unit] = IO {
     val results = subTranslation
       .filter(stSentence => stSentence.endSeconds < trimSample)
       .flatMap { stSentence =>
@@ -20,9 +20,11 @@ object TranslationComparison {
     val trues = results.count(identity)
     val total = results.size
 
-    println("number of matches " + trues)
-    println("total number of words checked" + total)
-    trues.toDouble / total.toDouble
+    println("Google Speech to Text Result")
+    println(s"number of matches $trues")
+    println(s"total number of words checked $total")
+    println(
+      s"Accuracy for google Speech to Text ${trues.toDouble / total.toDouble}")
   }
 
 }
